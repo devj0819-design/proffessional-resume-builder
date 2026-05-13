@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Executive Gray Resume</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f6f8;
+            color: #333333;
+            -webkit-print-color-adjust: exact;
+        }
+        .resume-container {
+            width: 210mm;
+            min-height: 297mm;
+            box-sizing: border-box;
+            background-color: #ffffff;
+            margin: 0 auto;
+            padding: 40px 35px;
+        }
+        /* Top Header Styling */
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px double #1a365d;
+            padding-bottom: 20px;
+            position: relative;
+        }
+        .header-flex {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+        }
+        .profile-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid #1a365d;
+            object-fit: cover;
+        }
+        .header-section h1 {
+            font-size: 36px;
+            color: #1a365d;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        /* Top Inline Contact Row */
+        .top-contact-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            font-size: 13px;
+            color: #4a5568;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .top-contact-row span {
+            background: #e2e8f0;
+            padding: 4px 10px;
+            border-radius: 4px;
+        }
+
+        /* 2-Column Dynamic Grid Layout as per Image */
+        .grid-layout {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .grid-box {
+            width: 48%; /* Photo ki tarah do barabar columns */
+            margin-bottom: 25px;
+            box-sizing: border-box;
+            page-break-inside: avoid; /* Box beech se nahi tootega */
+        }
+        .grid-box-full {
+            width: 100%; /* About me ke liye full width box */
+            margin-bottom: 25px;
+            box-sizing: border-box;
+            page-break-inside: avoid;
+        }
+        
+        /* Section Heading Box Style - Match with Image */
+        .box-title {
+            background-color: #1a365d;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: bold;
+            padding: 8px 12px;
+            margin: 0 0 12px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: 2px;
+        }
+        .box-content {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #4a5568;
+            white-space: pre-line;
+            padding: 0 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="resume-container">
+    <!-- Top Header Layout -->
+    <div class="header-section">
+        <div class="header-flex">
+            {% if photo %}
+                <img class="profile-img" src="data:image/png;base64,{{ photo }}" alt="Profile Photo">
+            {% endif %}
+            <div>
+                <h1>{{ name }}</h1>
+            </div>
+        </div>
+        
+        <!-- Inline Contact Details -->
+        <div class="top-contact-row">
+            <span>Email: {{ email }}</span>
+            <span>Mob: {{ mobile }}</span>
+            <span>Loc: {{ location }}</span>
+            {% for contact in extra_contacts %}
+                <span>{{ contact.label }}: {{ contact.value }}</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Main Grid Workspace -->
+    <div class="grid-layout">
+        
+        <!-- About Me Section (Always Full Width at Top of Content) -->
+        <div class="grid-box-full">
+            <h2 class="box-title">{{ summary_h }}</h2>
+            <div class="box-content">{{ summary_t }}</div>
+        </div>
+
+        <!-- Dynamic User Sections Loader into 2-Column Layout -->
+        {% for section in sections %}
+            <div class="grid-box">
+                <h2 class="box-title">
+                    {% if section.heading == 'EXPERIENSE' or section.heading == 'experiense' %}
+                        EXPERIENCE
+                    {% else %}
+                        {{ section.heading }}
+                    {% endif %}
+                </h2>
+                <div class="box-content">
+                    {{ section.details | replace('COLLAGE', 'COLLEGE') | replace('collage', 'college') }}
+                </div>
+            </div>
+        {% endfor %}
+
+    </div>
+</div>
+
+</body>
+</html>

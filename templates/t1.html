@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Modern Blue Resume</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #ffffff;
+            color: #333333;
+            -webkit-print-color-adjust: exact;
+        }
+        /* Dynamic multi-page layout */
+        .resume-container {
+            display: flex;
+            width: 210mm;
+            min-height: 297mm;
+            box-sizing: border-box;
+        }
+        .sidebar {
+            width: 32%;
+            background-color: #1a365d;
+            color: #ffffff;
+            padding: 35px 20px;
+            box-sizing: border-box;
+        }
+        .profile-img-container {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid #ffffff;
+            object-fit: cover;
+            display: inline-block;
+        }
+        .sidebar h2 {
+            font-size: 16px;
+            border-bottom: 2px solid #2b6cb0;
+            padding-bottom: 5px;
+            margin-top: 25px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .contact-info {
+            font-size: 12.5px;
+            line-height: 1.6;
+        }
+        .main-content {
+            width: 68%;
+            padding: 40px 35px;
+            box-sizing: border-box;
+        }
+        .main-content h1 {
+            font-size: 32px;
+            color: #1a365d;
+            margin: 0 0 15px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .main-content h2 {
+            font-size: 16px;
+            color: #1a365d;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 5px;
+            margin-top: 25px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .section-block {
+            margin-bottom: 15px;
+            page-break-inside: avoid; /* Section ko beech se tootne nahi dega */
+        }
+        .details-text {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #4a5568;
+            white-space: pre-line;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="resume-container">
+    <!-- Left Sidebar -->
+    <div class="sidebar">
+        {% if photo %}
+        <div class="profile-img-container">
+            <img class="profile-img" src="data:image/png;base64,{{ photo }}" alt="Profile Photo">
+        </div>
+        {% endif %}
+
+        <h2>Contact</h2>
+        <div class="contact-info">
+            <strong>Email:</strong><br>{{ email }}<br><br>
+            <strong>Phone:</strong><br>{{ mobile }}<br><br>
+            <strong>Location:</strong><br>{{ location }}<br><br>
+            
+            {% for contact in extra_contacts %}
+                <strong>{{ contact.label }}:</strong><br>{{ contact.value }}<br><br>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Right Content Area -->
+    <div class="main-content">
+        <h1>{{ name }}</h1>
+        
+        <h2>{{ summary_h }}</h2>
+        <p class="details-text">{{ summary_t }}</p>
+        
+        {% for section in sections %}
+            <div class="section-block">
+                <!-- Auto Correcting Common Typos inside code for Deva -->
+                <h2>
+                    {% if section.heading == 'EXPERIENSE' or section.heading == 'experiense' %}
+                        EXPERIENCE
+                    {% else %}
+                        {{ section.heading }}
+                    {% endif %}
+                </h2>
+                <p class="details-text">
+                    {{ section.details | replace('COLLAGE', 'COLLEGE') | replace('collage', 'college') }}
+                </p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+</body>
+</html>

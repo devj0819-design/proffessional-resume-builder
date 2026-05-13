@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Professional Resume Builder - Full Dynamic Live Preview</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #121212; color: #ffffff; margin: 0; padding: 0; }
+        .wrapper { display: flex; height: 100vh; }
+        
+        /* Left Input Form */
+        .form-container { width: 50%; padding: 30px; overflow-y: auto; background: #1e1e1e; box-shadow: 2px 0 10px rgba(0,0,0,0.5); }
+        
+        /* Right Live Preview Area */
+        .preview-container { width: 50%; padding: 20px; background: #2c2c2c; overflow-y: auto; display: flex; justify-content: center; align-items: flex-start; }
+        .resume-paper { width: 100%; max-width: 500px; background: white; color: #333; min-height: 700px; padding: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.3); box-sizing: border-box; }
+        
+        /* --- T1 TEMPLATE LIVE STYLE (Sidebar) --- */
+        .resume-paper.style-t1 { display: flex; padding: 0; }
+        .style-t1 .p-sidebar { width: 35%; background-color: #1a365d; color: white; padding: 20px 10px; font-size: 11px; word-wrap: break-word; }
+        .style-t1 .p-main { width: 65%; padding: 20px; }
+        .style-t1 h2 { font-size: 14px; text-transform: uppercase; border-bottom: 2px solid #2b6cb0; margin-top: 20px; padding-bottom: 3px; color: #1a365d; }
+        .style-t1 .p-sidebar h2 { color: white; border-bottom-color: #2b6cb0; margin-top: 0; }
+        .style-t1 h1 { font-size: 24px; margin: 0; color: #1a365d; text-transform: uppercase; }
+        
+        /* --- T2 TEMPLATE LIVE STYLE (Grid Box) --- */
+        .resume-paper.style-t2 { display: block; padding: 30px; }
+        .style-t2 .p-header { text-align: center; border-bottom: 2px double #1a365d; padding-bottom: 15px; margin-bottom: 20px; }
+        .style-t2 h1 { font-size: 26px; color: #1a365d; margin: 0 0 10px 0; text-transform: uppercase; text-align: center; }
+        .style-t2 .p-top-contact { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; font-size: 11px; font-weight: bold; color: #4a5568; }
+        .style-t2 .p-top-contact span { background: #e2e8f0; padding: 3px 8px; border-radius: 4px; }
+        .style-t2 .grid-layout { display: flex; flex-wrap: wrap; justify-content: space-between; }
+        .style-t2 .grid-box-full { width: 100%; margin-bottom: 15px; }
+        .style-t2 .grid-box { width: 48%; margin-bottom: 15px; }
+        .style-t2 h2 { background-color: #1a365d; color: #ffffff; font-size: 12px; font-weight: bold; padding: 5px 8px; margin: 0 0 8px 0; text-transform: uppercase; border-radius: 2px; }        
+
+        /* --- T3 TEMPLATE LIVE STYLE (Creative Top Banner Fix) --- */
+        .resume-paper.style-t3 { display: block; padding: 0; }
+        .style-t3 .p-banner { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); color: white; padding: 25px; text-align: left; }
+        .style-t3 h1 { font-size: 26px; margin: 0; color: #00adb5; text-transform: uppercase; }
+        .style-t3 .p-body-layout { display: flex; padding: 20px; gap: 20px; }
+        .style-t3 .p-left-content { width: 65%; }
+        .style-t3 .p-right-sub { width: 35%; background-color: #f8f9fa; padding: 12px; border-radius: 6px; border-left: 3px solid #00adb5; box-sizing: border-box; }
+        .style-t3 h2 { font-size: 13px; color: #2c5364; text-transform: uppercase; border-bottom: 2px solid #00adb5; padding-bottom: 3px; margin-top: 20px; }
+        .style-t3 .p-right-sub h2 { margin-top: 0; border-bottom-color: #2c5364; }
+        .style-t3 .c-item { font-size: 11px; margin-bottom: 8px; color: #333; word-wrap: break-word; }
+
+        /* Common Text Elements */
+        .p-text { font-size: 11px; color: #4a5568; white-space: pre-line; margin-top: 5px; }
+
+        /* Form Inputs Style */
+        h2.title { color: #00adb5; text-align: center; margin-top: 0; }
+        label { font-weight: bold; display: block; margin-top: 15px; color: #eeeeee; }
+        input[type="text"], textarea, input[type="file"], select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #393e46; background-color: #222831; color: #fff; border-radius: 4px; box-sizing: border-box; }
+        .btn { background-color: #00adb5; color: white; border: none; padding: 8px 12px; margin-top: 10px; border-radius: 4px; cursor: pointer; font-size: 13px; }
+        .btn:hover { background-color: #007c82; }
+        .btn-submit { background-color: #ff5722; width: 100%; font-size: 18px; padding: 15px; margin-top: 30px; }
+        .section-group, .contact-group { border: 1px dashed #393e46; padding: 12px; margin-top: 12px; border-radius: 6px; background: #252525; }
+        .row { display: flex; gap: 10px; margin-top: 5px; }
+        .row input { margin-top: 0; }
+
+        /* Gallery Cards Style */
+        .template-gallery { display: grid; grid-template-columns: repeat(3, 100px); gap: 15px; margin-top: 15px; justify-content: start; }
+        .template-card { text-align: center; background: #252525; border: 2px solid #393e46; border-radius: 6px; padding: 5px; cursor: pointer; }
+        .template-card img { width: 100%; height: auto; border-radius: 4px; display: block; border: 1px solid #555; }
+        .template-card span { display: block; font-size: 11px; margin-top: 5px; color: #aaa; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <!-- Left Side: Form Controls -->
+    <div class="form-container">
+        <h2 class="title">Resume Details</h2>
+        <form action="/generate" method="POST" enctype="multipart/form-data">
+            
+            <label>Full Name:</label>
+            <input type="text" id="f_name" name="name" oninput="updatePreview()" required>
+
+            <label>Email:</label>
+            <input type="text" id="f_email" name="email" oninput="updatePreview()" required>
+
+            <label>Mobile Number:</label>
+            <input type="text" id="f_mobile" name="mobile" oninput="updatePreview()" required>
+
+            <label>Location:</label>
+            <input type="text" id="f_location" name="location" oninput="updatePreview()" required>
+
+            <div id="dynamic-contacts"></div>
+            <button type="button" class="btn" onclick="addContact()">+ Add More Contact Detail (e.g., DOB, Father's Name, Links)</button>
+
+            <label style="margin-top: 20px;">Upload Photo:</label>
+            <input type="file" name="photo" accept="image/*">
+
+            <label>Summary Heading:</label>
+            <input type="text" id="f_sum_h" name="summary_h" value="Professional Summary" oninput="updatePreview()">
+
+            <label>Summary Details:</label>
+            <textarea id="f_sum_t" name="summary_t" rows="3" oninput="updatePreview()" required></textarea>
+
+            <h3 style="margin-top:30px; color:#00adb5;">Sections (Education, Experience, etc.)</h3>
+            <div id="dynamic-sections">
+                <div class="section-group">
+                    <label>Section Heading:</label>
+                    <input type="text" name="heading[]" class="f_sec_h" placeholder="e.g., EXPERIENCE" oninput="updatePreview()">
+                    <label>Section Details:</label>
+                    <textarea name="details[]" class="f_sec_d" rows="3" placeholder="Enter details..." oninput="updatePreview()"></textarea>
+                </div>
+            </div>
+            <button type="button" class="btn" onclick="addSection()">+ Add More Section / Heading</button>
+
+            <label style="margin-top: 25px;">Select Template Design:</label>
+            <select name="template" id="t_select" onchange="updatePreview()">
+                <option value="t1" selected>corporate jobs (ex. telecaller, data entry, etc.) (t1)</option>
+                <option value="t2">executive gray (ex. high profile jobs) (t2)</option>
+                <option value="t3">creative jobs (ex. Editor, youtube manager, etc.) (t3)</option>
+            </select>
+
+            <div class="template-gallery">
+                <div class="template-card" onclick="setTemplateSelect('t1')">
+                    <img src="static/t1.png" onerror="this.src='placehold.co'">
+                    <span>t1</span>
+                </div>
+                <div class="template-card" onclick="setTemplateSelect('t2')">
+                    <img src="static/t2.png" onerror="this.src='placehold.co'">
+                    <span>t2</span>
+                </div>
+                <div class="template-card" onclick="setTemplateSelect('t3')">
+                    <img src="static/t3.png" onerror="this.src='placehold.co'">
+                    <span>t3</span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-submit">Generate & Download PDF</button>
+        </form>
+    </div>
+
+    <!-- Right Side: Dynamic Live Workspace -->
+    <div class="preview-container">
+        <div class="resume-paper style-t1" id="live_paper">
+            <!-- Loaded dynamically via JavaScript -->
+        </div>
+    </div>
+</div>
+
+<script>
+    function setTemplateSelect(val) {
+        document.getElementById('t_select').value = val;
+        updatePreview();
+    }
+
+    function addContact() {
+        const container = document.getElementById('dynamic-contacts');
+        const newContact = document.createElement('div');
+        newContact.className = 'contact-group';
+        newContact.innerHTML = `
+            <div class="row">
+                <input type="text" name="contact_label[]" class="f_con_l" placeholder="e.g., DOB" style="width: 40%;" oninput="updatePreview()">
+                <input type="text" name="contact_value[]" class="f_con_v" placeholder="e.g., 15/08/2000" style="width: 60%;" oninput="updatePreview()">
+            </div>
+        `;
+        container.appendChild(newContact);
+        updatePreview();
+    }
+
+    function addSection() {
+        const container = document.getElementById('dynamic-sections');
+        const newSection = document.createElement('div');
+        newSection.className = 'section-group';
+        newSection.innerHTML = `
+            <label>Section Heading:</label>
+            <input type="text" name="heading[]" class="f_sec_h" placeholder="e.g., SKILLS" oninput="updatePreview()">
+            <label>Section Details:</label>
+            <textarea name="details[]" class="f_sec_d" rows="3" placeholder="Enter details..." oninput="updatePreview()"></textarea>
+        `;
+        container.appendChild(newSection);
+        updatePreview();
+    }
+
+    function updatePreview() {
+        const selectedTemplate = document.getElementById('t_select').value;
+        const paper = document.getElementById('live_paper');
+        
+        const name = document.getElementById('f_name').value || "YOUR NAME";
+        const email = document.getElementById('f_email').value;
+        const mobile = document.getElementById('f_mobile').value;
+        const location = document.getElementById('f_location').value;
+        const sum_h = document.getElementById('f_sum_h').value || "Professional Summary";
+        const sum_t = document.getElementById('f_sum_t').value;
+
+        // Sections Parser
+        const headings = document.getElementsByClassName('f_sec_h');
+        const details = document.getElementsByClassName('f_sec_d');
+        let parsedSections = [];
+        for(let i=0; i<headings.length; i++) {
+            let h_val = headings[i].value;
+            let d_val = details[i].value;
+            if(h_val.trim() !== '') {
+                if(h_val.toUpperCase() === 'EXPERIENSE') h_val = 'EXPERIENCE';
+                d_val = d_val.replace(/COLLAGE/gi, 'COLLEGE');
+                parsedSections.push({h: h_val, d: d_val});
+            }
+        }
+
+        // Extra Contacts Parser
+        const c_labels = document.getElementsByClassName('f_con_l');
+        const c_values = document.getElementsByClassName('f_con_v');
+        let parsedContacts = [];
+        for(let i=0; i<c_labels.length; i++) {
+            if(c_labels[i].value.trim() !== '') {
+                parsedContacts.push({l: c_labels[i].value, v: c_values[i].value});
+            }
+        }
+
+        // --- RENDER T1 LAYOUT (Sidebar) ---
+        if (selectedTemplate === 't1') {
+            paper.className = "resume-paper style-t1";
+            let extraContactsHTML = '';
+            parsedContacts.forEach(c => { extraContactsHTML += `<strong>${c.l}:</strong><br>${c.v}<br><br>`; });
+            
+            let mainSectionsHTML = '';
+            parsedSections.forEach(s => { mainSectionsHTML += `<h2>${s.h}</h2><p class="p-text">${s.d}</p>`; });
+
+            paper.innerHTML = `
+                <div class="p-sidebar">
+                    <h2>Contact</h2>
+                    <strong>Email:</strong><br>${email}<br><br>
+                    <strong>Phone:</strong><br>${mobile}<br><br>
+                    <strong>Location:</strong><br>${location}<br><br>
+                    ${extraContactsHTML}
+                </div>
+                <div class="p-main">
+                    <h1>${name}</h1>
+                    <h2>${sum_h}</h2>
+                    <p class="p-text">${sum_t}</p>
+                    ${mainSectionsHTML}
+                </div>
+            `;
+        } 
+        // --- RENDER T2 LAYOUT (GRID BOX) ---
+        else if (selectedTemplate === 't2') {
+            paper.className = "resume-paper style-t2";
+            
+            let inlineContactHTML = `<span>Email: ${email}</span><span>Mob: ${mobile}</span><span>Loc: ${location}</span>`;
+            parsedContacts.forEach(c => { inlineContactHTML += `<span>${c.l}: ${c.v}</span>`; });
+
+            let gridSectionsHTML = '';
+            parsedSections.forEach(s => {
+                gridSectionsHTML += `
+                    <div class="grid-box">
+                        <h2>${s.h}</h2>
+                        <div class="p-text">${s.d}</div>
+                    </div>
+                `;
+            });
+
+            paper.innerHTML = `
+                <div class="p-header">
+                    <h1>${name}</h1>
+                    <div class="p-top-contact">${inlineContactHTML}</div>
+                </div>
+                <div class="grid-layout">
+                    <div class="grid-box-full">
+                        <h2>${sum_h}</h2>
+                        <div class="p-text">${sum_t}</div>
+                    </div>
+                    ${gridSectionsHTML}
+                </div>
+            `;
+        }
+        // --- RENDER T3 LAYOUT (CREATIVE BANNER FIX) ---
+        else if (selectedTemplate === 't3') {
+            paper.className = "resume-paper style-t3";
+            
+            let mainSectionsHTML = '';
+            parsedSections.forEach(s => { mainSectionsHTML += `<h2>${s.h}</h2><p class="p-text">${s.d}</p>`; });
+
+            let rightContactHTML = `
+                <div class="c-item"><strong>Email:</strong><br>${email}</div>
+                <div class="c-item"><strong>Phone:</strong><br>${mobile}</div>
+                <div class="c-item"><strong>Location:</strong><br>${location}</div>
+            `;
+            parsedContacts.forEach(c => { rightContactHTML += `<div class="c-item"><strong>${c.l}:</strong><br>${c.v}</div>`; });
+
+            paper.innerHTML = `
+                <div class="p-banner">
+                    <h1>${name}</h1>
+                </div>
+                <div class="p-body-layout">
+                    <div class="p-left-content">
+                        <h2 style="margin-top:0;">${sum_h}</h2>
+                        <div class="p-text">${sum_t}</div>
+                        ${mainSectionsHTML}
+                    </div>
+                    <div class="p-right-sub">
+                        <h2>Contact Info</h2>
+                        ${rightContactHTML}
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
+    window.onload = updatePreview;
+</script>
+
+</body>
+</html>
